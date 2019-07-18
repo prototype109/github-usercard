@@ -52,8 +52,12 @@ const followersArray = ["tetondan",
 
 */
 
-function Users(){
- const createUser = (person) => {
+
+
+function Users(person){
+ const cardHolder = document.querySelector('.cards');
+
+ const createUser = () => {
     const card = document.createElement('div');
     card.classList.add('card');
 
@@ -82,27 +86,44 @@ function Users(){
 
   function paragraphMaker(string, data, link = false){
     const paragraph = document.createElement('p');
-    paragraph.textContent = `${string}: `
+    paragraph.textContent = `${string}: `;
+
     if(link){
+      //console.log('here');
       const newLink = document.createElement('a');
-      newLink.href = data.data.html_url;
+      newLink.href = data;
+      newLink.target = '_blank';
+      newLink.textContent = data;
       paragraph.appendChild(newLink);
-    }
-    paragraph.textContent += `${data}`;
+      //console.log(paragraph);
+    }else
+      paragraph.textContent += `${data}`;
+    //console.log(paragraph);
     return paragraph;
   };
 
-  const addUsers = () => {
-    followersArray.forEach(follower => {
-      axios.get(`https://api.github.com/users/${follower}`)
-      .then((data) => {
-        createUser(data);
-        //console.log(data);
-      }).catch((err) => console.log('failed'));
-    });
-    
-  };
+  cardHolder.appendChild(createUser());
 }
+
+axios.get(`https://api.github.com/users/prototype109`)
+  .then((data) => {
+    Users(data);
+    //console.log(data);
+  }).catch((err) => {
+    console.log('failed: ', err)
+    //console.log(data);
+  });
+
+  followersArray.forEach(follower => {
+    axios.get(`https://api.github.com/users/${follower}`)
+    .then((data) => {
+      Users(data);
+      //console.log(data);
+    }).catch((err) => {
+      console.log('failed: ', err)
+      //console.log(data);
+    });
+  });
 
 /* List of LS Instructors Github username's: 
   tetondan
