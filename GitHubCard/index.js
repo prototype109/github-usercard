@@ -53,31 +53,55 @@ const followersArray = ["tetondan",
 */
 
 function Users(){
-  function createUser(person){
+ const createUser = (person) => {
     const card = document.createElement('div');
     card.classList.add('card');
 
     const img = document.createElement('img');
     img.src = person.data.avatar_url;
+    card.appendChild(img);
 
     const cardInfo = document.createElement('div');
     cardInfo.classList.add('card-info');
-
+    
     const name = document.createElement('h3');
-    name.textContent = person.data.login;
+    name.classList.add('name');
+    name.textContent = person.data.name;
+    cardInfo.appendChild(name);
 
-  }
+    cardInfo.appendChild(paragraphMaker('Location', person.data.location));
+    cardInfo.appendChild(paragraphMaker('Profile', person.data.html_url, true));
+    cardInfo.appendChild(paragraphMaker('Followers', person.data.followers));
+    cardInfo.appendChild(paragraphMaker('Following', person.data.following));
+    cardInfo.appendChild(paragraphMaker('Bio', person.data.bio));
 
-  function addUsers(){
+    card.appendChild(cardInfo);
+
+    return card;
+  };
+
+  function paragraphMaker(string, data, link = false){
+    const paragraph = document.createElement('p');
+    paragraph.textContent = `${string}: `
+    if(link){
+      const newLink = document.createElement('a');
+      newLink.href = data.data.html_url;
+      paragraph.appendChild(newLink);
+    }
+    paragraph.textContent += `${data}`;
+    return paragraph;
+  };
+
+  const addUsers = () => {
     followersArray.forEach(follower => {
       axios.get(`https://api.github.com/users/${follower}`)
       .then((data) => {
         createUser(data);
         //console.log(data);
       }).catch((err) => console.log('failed'));
-    })
+    });
     
-  }
+  };
 }
 
 /* List of LS Instructors Github username's: 
