@@ -3,6 +3,8 @@
            https://api.github.com/users/<your name>
 */
 
+
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,7 +26,11 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ["tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell"];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -45,6 +51,79 @@ const followersArray = [];
 </div>
 
 */
+
+
+
+function Users(person){
+ const cardHolder = document.querySelector('.cards');
+
+ const createUser = () => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+
+    const img = document.createElement('img');
+    img.src = person.data.avatar_url;
+    card.appendChild(img);
+
+    const cardInfo = document.createElement('div');
+    cardInfo.classList.add('card-info');
+    
+    const name = document.createElement('h3');
+    name.classList.add('name');
+    name.textContent = person.data.name;
+    cardInfo.appendChild(name);
+
+    cardInfo.appendChild(paragraphMaker('Location', person.data.location));
+    cardInfo.appendChild(paragraphMaker('Profile', person.data.html_url, true));
+    cardInfo.appendChild(paragraphMaker('Followers', person.data.followers));
+    cardInfo.appendChild(paragraphMaker('Following', person.data.following));
+    cardInfo.appendChild(paragraphMaker('Bio', person.data.bio));
+
+    card.appendChild(cardInfo);
+
+    return card;
+  };
+
+  function paragraphMaker(string, data, link = false){
+    const paragraph = document.createElement('p');
+    paragraph.textContent = `${string}: `;
+
+    if(link){
+      //console.log('here');
+      const newLink = document.createElement('a');
+      newLink.href = data;
+      newLink.target = '_blank';
+      newLink.textContent = data;
+      paragraph.appendChild(newLink);
+      //console.log(paragraph);
+    }else
+      paragraph.textContent += `${data}`;
+    //console.log(paragraph);
+    return paragraph;
+  };
+
+  cardHolder.appendChild(createUser());
+}
+
+axios.get(`https://api.github.com/users/prototype109`)
+  .then((data) => {
+    Users(data);
+    //console.log(data);
+  }).catch((err) => {
+    console.log('failed: ', err)
+    //console.log(data);
+  });
+
+  followersArray.forEach(follower => {
+    axios.get(`https://api.github.com/users/${follower}`)
+    .then((data) => {
+      Users(data);
+      //console.log(data);
+    }).catch((err) => {
+      console.log('failed: ', err)
+      //console.log(data);
+    });
+  });
 
 /* List of LS Instructors Github username's: 
   tetondan
